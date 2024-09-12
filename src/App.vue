@@ -56,7 +56,7 @@
                 data-cy="TodoStatus"
                 type="checkbox"
                 class="todo__status" /></label
-            ><span data-cy="TodoTitle" class="todo__title">siku</span
+            ><span data-cy="TodoTitle" class="todo__title">kita</span
             ><button type="button" class="todo__remove" data-cy="TodoDelete">
               ×
             </button>
