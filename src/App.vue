@@ -116,9 +116,7 @@ export default {
             >{{ remainingTasks.length }} items left</span
           >
 
-          <StatusFilter
-            :selected="activeFilteName"
-            @change="activeFilteName = $event" />
+          <StatusFilter v-model:model-value="activeFilteName" />
 
           <button
             type="button"

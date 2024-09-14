@@ -1,7 +1,7 @@
 <script>
 export default {
-  props: ['selected'],
-  emits: ['change']
+  props: ['modelValue'],
+  emits: ['update:modelValue'],
 };
 </script>
 
@@ -10,24 +10,24 @@ export default {
     <a
       href="#/"
       class="filter__link"
-      :class="{ selected: selected === 'all' }"
-      @click="$emit('change', 'all')"
+      :class="{ selected: modelValue === 'all' }"
+      @click="$emit('update:modelValue', 'all')"
       data-cy="FilterLinkAll"
       >All</a
     >
     <a
       href="#/Active"
       class="filter__link"
-      :class="selected === 'active' && 'selected'"
-      @click="$emit('change', 'active')"
+      :class="{selected: modelValue === 'active'}"
+      @click="$emit('update:modelValue', 'active')"
       data-cy="FilterLinkActive"
       >Active</a
     >
     <a
       href="#/Completed"
       class="filter__link"
-      :class="{ selected: selected === 'completed' }"
-      @click="$emit('change', 'completed')"
+      :class="{ selected: modelValue === 'completed' }"
+      @click="$emit('update:modelValue', 'completed')"
       data-cy="FilterLinkCompleted"
       >Completed</a
     >
