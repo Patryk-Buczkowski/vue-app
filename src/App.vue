@@ -14,6 +14,7 @@ export default {
     return {
       tasks,
       title: '',
+      activeFilteName: 'completed',
     };
   },
   mounted() {
@@ -114,8 +115,8 @@ export default {
           <span class="todo-count" data-cy="TodosCounter"
             >{{ remainingTasks.length }} items left</span
           >
-          
-          <StatusFilter />
+
+          <StatusFilter :selected="activeFilteName"/>
 
           <button
             type="button"
