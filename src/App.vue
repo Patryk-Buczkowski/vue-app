@@ -28,7 +28,9 @@ export default {
         <section class="todoapp__main" data-cy="TodoList">
           <div v-for="task of tasks" data-cy="Todo" class="todo" :class="{ completed: task.completed }">
             <label class="todo__status-label">
-              <input data-cy="TodoStatus" type="checkbox" class="todo__status" /></label>
+              <input data-cy="TodoStatus" type="checkbox" class="todo__status"
+                v-model="task.completed" />
+            </label>
             <span data-cy="TodoTitle" class="todo__title">{{ task.title }}</span>
 
             <button type="button" class="todo__remove" data-cy="TodoDelete">×</button>
