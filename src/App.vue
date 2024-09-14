@@ -1,9 +1,12 @@
 <script>
-import tasks from './todos';
-console.log({ tasks });
+// import tasks from './todos';
+// console.log({ tasks });
 
 export default {
   data() {
+    const data = localStorage.getItem('tasks');
+    const tasks = data !== null ? JSON.parse(data) : []
+    console.log('data', data)
     return {
       tasks,
       title: '',
@@ -31,6 +34,19 @@ export default {
       });
 
       this.title = '';
+    },
+  },
+
+  watch: {
+    title() {
+      console.log(this.title);
+    },
+
+    tasks: {
+      deep: true,
+      handler() {
+        localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      },
     },
   },
 };
