@@ -33,7 +33,7 @@ export default {
             </label>
             <span data-cy="TodoTitle" class="todo__title">{{ task.title }}</span>
 
-            <button v-on:click="tasks.splice(index, 1)" type="button" class="todo__remove" data-cy="TodoDelete">×</button>
+            <button @click="tasks.splice(index, 1)" type="button" class="todo__remove" data-cy="TodoDelete">×</button>
 
             <div data-cy="TodoLoader" class="modal overlay">
               <div class="modal-background has-background-white-ter"></div>
