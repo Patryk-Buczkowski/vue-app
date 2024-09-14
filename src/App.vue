@@ -116,7 +116,9 @@ export default {
             >{{ remainingTasks.length }} items left</span
           >
 
-          <StatusFilter :selected="activeFilteName"/>
+          <StatusFilter
+            :selected="activeFilteName"
+            @change="activeFilteName = $event" />
 
           <button
             type="button"
