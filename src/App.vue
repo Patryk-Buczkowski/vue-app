@@ -7,6 +7,14 @@ export default {
     return {
       tasks
     }
+  },
+  mounted() {
+    console.log(this.tasks)
+  },
+  computed: {
+    remainingTasks() {
+      return this.tasks.filter(task => task.completed);
+    }
   }
 }
 </script>
@@ -28,8 +36,7 @@ export default {
         <section class="todoapp__main" data-cy="TodoList">
           <div v-for="task, index of tasks" data-cy="Todo" class="todo" :class="{ completed: task.completed }">
             <label class="todo__status-label">
-              <input data-cy="TodoStatus" type="checkbox" class="todo__status"
-                v-model="task.completed" />
+              <input data-cy="TodoStatus" type="checkbox" class="todo__status" v-model="task.completed" />
             </label>
             <span data-cy="TodoTitle" class="todo__title">{{ task.title }}</span>
 
@@ -43,7 +50,7 @@ export default {
         </section>
 
         <footer class="todoapp__footer" data-cy="Footer">
-          <span class="todo-count" data-cy="TodosCounter">1 items left</span>
+          <span class="todo-count" data-cy="TodosCounter">{{ remainingTasks.length }} items left</span>
           <nav class="filter" data-cy="Filter">
             <a href="#/" class="filter__link selected" data-cy="FilterLinkAll">All</a>
             <a href="#/Active" class="filter__link" data-cy="FilterLinkActive">Active</a>
