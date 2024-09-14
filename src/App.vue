@@ -1,12 +1,16 @@
 <script>
 // import tasks from './todos';
 // console.log({ tasks });
+import StatusFilter from './components/StatusFilter.vue';
 
 export default {
+  components: {
+    StatusFilter,
+  },
   data() {
     const data = localStorage.getItem('tasks');
-    const tasks = data !== null ? JSON.parse(data) : []
-    console.log('data', data)
+    const tasks = data !== null ? JSON.parse(data) : [];
+    console.log('data', data);
     return {
       tasks,
       title: '',
@@ -110,20 +114,8 @@ export default {
           <span class="todo-count" data-cy="TodosCounter"
             >{{ remainingTasks.length }} items left</span
           >
-          <nav class="filter" data-cy="Filter">
-            <a href="#/" class="filter__link selected" data-cy="FilterLinkAll"
-              >All</a
-            >
-            <a href="#/Active" class="filter__link" data-cy="FilterLinkActive"
-              >Active</a
-            >
-            <a
-              href="#/Completed"
-              class="filter__link"
-              data-cy="FilterLinkCompleted"
-              >Completed</a
-            >
-          </nav>
+          
+          <StatusFilter />
 
           <button
             type="button"
