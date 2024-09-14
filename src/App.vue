@@ -26,14 +26,14 @@ export default {
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <div v-for="task of tasks" data-cy="Todo" class="todo" :class="{ completed: task.completed }">
+          <div v-for="task, index of tasks" data-cy="Todo" class="todo" :class="{ completed: task.completed }">
             <label class="todo__status-label">
               <input data-cy="TodoStatus" type="checkbox" class="todo__status"
                 v-model="task.completed" />
             </label>
             <span data-cy="TodoTitle" class="todo__title">{{ task.title }}</span>
 
-            <button type="button" class="todo__remove" data-cy="TodoDelete">×</button>
+            <button v-on:click="tasks.splice(index, 1)" type="button" class="todo__remove" data-cy="TodoDelete">×</button>
 
             <div data-cy="TodoLoader" class="modal overlay">
               <div class="modal-background has-background-white-ter"></div>
