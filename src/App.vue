@@ -2,15 +2,16 @@
 // import tasks from './todos';
 // console.log({ tasks });
 import StatusFilter from './components/StatusFilter.vue';
+import TodoItem from './components/TodoItem.vue';
 
 export default {
   components: {
     StatusFilter,
+    TodoItem,
   },
   data() {
     const data = localStorage.getItem('tasks');
     const tasks = data !== null ? JSON.parse(data) : [];
-    console.log('data', data);
     return {
       tasks,
       title: '',
@@ -39,6 +40,14 @@ export default {
       });
 
       this.title = '';
+    },
+
+    removeTask({ id }) {
+      const index = this.tasks.findIndex(task => task.id === id);
+      if (index === -1) {
+        return;
+      }
+      this.tasks.splice(index, 1);
     },
   },
 
@@ -80,35 +89,10 @@ export default {
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <div
+          <TodoItem
             v-for="(task, index) of tasks"
-            data-cy="Todo"
-            class="todo"
-            :class="{ completed: task.completed }">
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-                v-model="task.completed" />
-            </label>
-            <span data-cy="TodoTitle" class="todo__title">{{
-              task.title
-            }}</span>
-
-            <button
-              @click="tasks.splice(index, 1)"
-              type="button"
-              class="todo__remove"
-              data-cy="TodoDelete">
-              ×
-            </button>
-
-            <div data-cy="TodoLoader" class="modal overlay">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
+            :task="task"
+            @remove="removeTask" />
         </section>
 
         <footer class="todoapp__footer" data-cy="Footer">
@@ -116,7 +100,7 @@ export default {
             >{{ remainingTasks.length }} items left</span
           >
 
-          <StatusFilter v-model:model-value="activeFilteName" />
+          <StatusFilter v-model="activeFilteName" />
 
           <button
             type="button"
