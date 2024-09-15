@@ -12,10 +12,12 @@ export default {
   data() {
     const data = localStorage.getItem('tasks');
     const tasks = data !== null ? JSON.parse(data) : [];
+    console.log('2', tasks);
     return {
       tasks,
       title: '',
-      activeFilteName: 'completed',
+      activeFilteName: 'all',
+      allTask: true,
     };
   },
   mounted() {
@@ -42,7 +44,15 @@ export default {
   },
   methods: {
     clearCompleted() {
-      return this.tasks = this.tasks.filter(task => !task.completed)
+      return (this.tasks = this.tasks.filter(task => !task.completed));
+    },
+    toggleAll() {
+      this.allTask = !this.allTask;
+
+      return (this.tasks = this.tasks.map(task => ({
+        ...task,
+        completed: this.allTask,
+      })));
     },
     handleSubmit() {
       const title = this.title;
@@ -90,6 +100,7 @@ export default {
       <div class="todoapp__content">
         <header class="todoapp__header">
           <button
+            @click="toggleAll"
             type="button"
             class="todoapp__toggle-all"
             data-cy="ToggleAllButton"></button>
@@ -106,10 +117,13 @@ export default {
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <TodoItem
-            v-for="task of visibleTasks"
-            :task="task"
-            @remove="removeTask" />
+          <TransitionGroup name="list" tag="div">
+            <TodoItem
+              v-for="task of visibleTasks"
+              :task="task"
+              :key="task.id"
+              @remove="removeTask" />
+          </TransitionGroup>
         </section>
 
         <footer class="todoapp__footer" data-cy="Footer">
@@ -136,3 +150,15 @@ export default {
     </div>
   </div>
 </template>
+
+<style>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+</style>
