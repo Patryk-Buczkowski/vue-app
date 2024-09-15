@@ -1,6 +1,4 @@
 <script>
-// import tasks from './todos';
-// console.log({ tasks });
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
 
@@ -12,16 +10,12 @@ export default {
   data() {
     const data = localStorage.getItem('tasks');
     const tasks = data !== null ? JSON.parse(data) : [];
-    console.log('2', tasks);
     return {
       tasks,
       title: '',
       activeFilteName: 'all',
       allTask: true,
     };
-  },
-  mounted() {
-    console.log(this.tasks);
   },
   computed: {
     remainingTasks() {
@@ -79,10 +73,6 @@ export default {
   },
 
   watch: {
-    title() {
-      console.log(this.title);
-    },
-
     tasks: {
       deep: true,
       handler() {
@@ -155,10 +145,12 @@ export default {
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
+  max-height: 60px;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  max-height: 0;
+  transform: scaleY(0);
 }
 </style>
