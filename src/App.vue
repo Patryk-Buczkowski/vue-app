@@ -23,10 +23,27 @@ export default {
   },
   computed: {
     remainingTasks() {
+      return this.tasks.filter(task => !task.completed);
+    },
+    completedTasks() {
       return this.tasks.filter(task => task.completed);
+    },
+    visibleTasks() {
+      switch (this.activeFilteName) {
+        case 'active':
+          return this.remainingTasks;
+        case 'completed':
+          return this.completedTasks;
+        case 'all':
+        default:
+          return this.tasks;
+      }
     },
   },
   methods: {
+    clearCompleted() {
+      return this.tasks = this.tasks.filter(task => !task.completed)
+    },
     handleSubmit() {
       const title = this.title;
 
@@ -90,7 +107,7 @@ export default {
 
         <section class="todoapp__main" data-cy="TodoList">
           <TodoItem
-            v-for="(task, index) of tasks"
+            v-for="task of visibleTasks"
             :task="task"
             @remove="removeTask" />
         </section>
@@ -103,6 +120,7 @@ export default {
           <StatusFilter v-model="activeFilteName" />
 
           <button
+            @click="clearCompleted"
             type="button"
             class="todoapp__clear-completed"
             data-cy="ClearCompletedButton">
