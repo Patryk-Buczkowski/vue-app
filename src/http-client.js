@@ -19,6 +19,6 @@ export const createTodo = (title) => {
   });
 };
 
-export const removeTask = (taskId) => {
+export const deleteTask = (taskId) => {
   return httpClient.delete(`/todos/${taskId}`)
 };

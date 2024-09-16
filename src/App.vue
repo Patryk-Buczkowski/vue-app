@@ -1,7 +1,7 @@
 <script>
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
-import { createTodo, getTasks, removeTask } from './http-client';
+import { createTodo, deleteTask, getTasks } from './http-client';
 
 export default {
   components: {
@@ -44,7 +44,12 @@ export default {
   },
   methods: {
     clearCompleted() {
-      return (this.tasks = this.tasks.filter(task => !task.completed));
+      this.tasks.forEach(task => {
+        task.completed &&
+          deleteTask(task.id).then(() => {
+            this.tasks = this.tasks.filter(t => t.id !== task.id);
+          });
+      });
     },
     toggleAll() {
       this.allTask = !this.allTask;
@@ -73,7 +78,7 @@ export default {
         return;
       }
 
-      removeTask(id).then(this.tasks.splice(index, 1))
+      deleteTask(id).then(this.tasks.splice(index, 1));
     },
   },
 
