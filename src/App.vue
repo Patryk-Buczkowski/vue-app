@@ -1,17 +1,23 @@
 <script>
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
+import { createTodo, getTasks, removeTask } from './http-client';
 
 export default {
   components: {
     StatusFilter,
     TodoItem,
   },
+  mounted() {
+    getTasks().then(data => {
+      this.tasks = data;
+    });
+  },
   data() {
     const data = localStorage.getItem('tasks');
-    const tasks = data !== null ? JSON.parse(data) : [];
+    // const tasks = data !== null ? JSON.parse(data) : [];
     return {
-      tasks,
+      tasks: [],
       title: '',
       activeFilteName: 'all',
       allTask: true,
@@ -54,13 +60,11 @@ export default {
       if (this.title.trim() === '') {
         return;
       }
-      this.tasks.push({
-        id: Date.now(),
-        title: this.title,
-        completed: false,
-      });
 
-      this.title = '';
+      createTodo(this.title).then(({ data }) => {
+        this.tasks = [...this.tasks, data];
+        this.title = '';
+      });
     },
 
     removeTask({ id }) {
@@ -68,11 +72,13 @@ export default {
       if (index === -1) {
         return;
       }
-      this.tasks.splice(index, 1);
+
+      removeTask(id).then(this.tasks.splice(index, 1))
     },
   },
 
   watch: {
+    /* remember to analize this */
     tasks: {
       deep: true,
       handler() {
@@ -142,7 +148,7 @@ export default {
 </template>
 
 <style>
-.list-enter-active,
+.list-enter-active, /* remember to check where this class comes from */
 .list-leave-active {
   transition: all 0.5s ease;
   max-height: 60px;
