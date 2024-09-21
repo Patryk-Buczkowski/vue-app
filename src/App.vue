@@ -2,16 +2,13 @@
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
 import { createTodo, deleteTask, getTasks } from './http-client';
+import Message from './components/Message.vue';
 
 export default {
   components: {
     StatusFilter,
     TodoItem,
-  },
-  mounted() {
-    getTasks().then(data => {
-      this.tasks = data;
-    });
+    Message,
   },
   data() {
     const data = localStorage.getItem('tasks');
@@ -21,7 +18,18 @@ export default {
       title: '',
       activeFilteName: 'all',
       allTask: true,
+      error: null,
     };
+  },
+  mounted() {
+    getTasks()
+      .then(data => {
+        this.tasks = data;
+        return Promise.reject();
+      })
+      .catch(() => {
+        this.$refs.errorMessage.show('Unable to load todos');
+      });
   },
   computed: {
     remainingTasks() {
@@ -62,11 +70,11 @@ export default {
     handleSubmit() {
       const title = this.title;
 
-      if (this.title.trim() === '') {
+      if (title.trim() === '') {
         return;
       }
 
-      createTodo(this.title).then(({ data }) => {
+      createTodo(title.trim()).then(({ data }) => {
         this.tasks = [...this.tasks, data];
         this.title = '';
       });
@@ -143,11 +151,17 @@ export default {
           </button>
         </footer>
       </div>
-      <div
-        data-cy="ErrorNotification"
-        class="notification is-danger is-light has-text-weight-normal hidden">
-        <button data-cy="HideErrorButton" type="button" class="delete"></button>
-      </div>
+      
+      <Message :active="error !== null" class="is-warning">
+        <template #default="{ x }">
+          <p>{{ error?.message }} {{ x }} seconds ago</p>
+        </template>
+
+        <template #header>
+          <p>Server error</p>
+          <p>{{ console.log('this.error', this.error) }}</p>
+        </template>
+      </Message>
     </div>
   </div>
 </template>

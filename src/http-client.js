@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const USER_ID = 2;
 const httpClient = axios.create({
-  baseURL: 'https://mate.academy/students-api/',
+  baseURL: 'https://mate.academy/students-api',
 });
 
 export const getTasks = () => {
@@ -11,7 +11,7 @@ export const getTasks = () => {
   });
 };
 
-export const createTodo = (title) => {
+export const createTodo = title => {
   return httpClient.post('/todos', {
     title,
     completed: false,
@@ -19,6 +19,13 @@ export const createTodo = (title) => {
   });
 };
 
-export const deleteTask = (taskId) => {
-  return httpClient.delete(`/todos/${taskId}`)
+export const deleteTask = taskId => {
+  return httpClient.delete(`/todos/${taskId}`);
+};
+
+export const patchTask = ({taskId, title, completed}) => {
+  return httpClient.patch(`/todos/${taskId}`, {
+    title,
+    completed,
+  });
 };
