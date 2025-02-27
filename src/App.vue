@@ -18,7 +18,6 @@ export default {
       title: '',
       activeFilteName: 'all',
       allTask: true,
-      error: null,
     };
   },
   mounted() {
@@ -151,15 +150,14 @@ export default {
           </button>
         </footer>
       </div>
-      
-      <Message :active="error !== null" class="is-warning">
-        <template #default="{ x }">
-          <p>{{ error?.message }} {{ x }} seconds ago</p>
+
+      <Message ref="errorMessage" class="is-warning">
+        <template #default="{ x, message }">
+          <p>{{ message }} {{ x }} seconds ago</p>
         </template>
 
         <template #header>
           <p>Server error</p>
-          <p>{{ console.log('this.error', this.error) }}</p>
         </template>
       </Message>
     </div>
@@ -167,7 +165,7 @@ export default {
 </template>
 
 <style>
-.list-enter-active, /* remember to check where this class comes from */
+.list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
   max-height: 60px;
