@@ -19,6 +19,11 @@ export default {
         taskId: this.task.id,
         title: this.task.title,
         completed: newValue,
+      }).then(() => {
+        this.$emit('update', {
+          ...this.task,
+          completed: newValue,
+        });
       });
     },
   },

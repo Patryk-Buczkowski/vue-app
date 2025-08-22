@@ -10,9 +10,10 @@ export default {
     TodoItem,
     Message,
   },
+
   data() {
     const data = localStorage.getItem('tasks');
-    // const tasks = data !== null ? JSON.parse(data) : [];
+    const tasks = data !== null ? JSON.parse(data) : [];
     return {
       tasks: [],
       title: '',
@@ -20,16 +21,18 @@ export default {
       allTask: true,
     };
   },
+
   mounted() {
     getTasks()
       .then(data => {
         this.tasks = data;
-        return Promise.reject();
+        // return Promise.reject();
       })
       .catch(() => {
         this.$refs.errorMessage.show('Unable to load todos');
       });
   },
+
   computed: {
     remainingTasks() {
       return this.tasks.filter(task => !task.completed);
@@ -50,6 +53,14 @@ export default {
     },
   },
   methods: {
+    updateTask(updatedTask) {
+      const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+
+      if (index !== -1) {
+        this.tasks.splice(index, 1, updatedTask);
+      }
+    },
+
     clearCompleted() {
       this.tasks.forEach(task => {
         task.completed &&
@@ -130,7 +141,8 @@ export default {
               v-for="task of visibleTasks"
               :task="task"
               :key="task.id"
-              @remove="removeTask" />
+              @remove="removeTask"
+              @update="updateTask" />
           </TransitionGroup>
         </section>
 
