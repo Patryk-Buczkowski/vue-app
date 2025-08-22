@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const USER_ID = 3;
 const httpClient = axios.create({
-  baseURL: 'https://mate.academy/students-api',
+  baseURL: import.meta.env.VITE_BASE_URL,
 });
 
 export const getTasks = () => {

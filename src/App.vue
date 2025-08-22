@@ -1,7 +1,7 @@
 <script>
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
-import { createTodo, deleteTask, getTasks } from './http-client';
+import { createTodo, deleteTask, getTasks, patchTask } from './http-client';
 import Message from './components/Message.vue';
 
 export default {
@@ -69,13 +69,31 @@ export default {
           });
       });
     },
-    toggleAll() {
-      this.allTask = !this.allTask;
 
-      return (this.tasks = this.tasks.map(task => ({
-        ...task,
-        completed: this.allTask,
-      })));
+    async toggleAll() {
+      const allCompleted = this.tasks.every(task => task.completed);
+      const newStatus = !allCompleted;
+
+      const promises = this.tasks.map(task =>
+        patchTask({
+          taskId: task.id,
+          title: task.title,
+          completed: newStatus,
+        }),
+      );
+
+      try {
+        await Promise.all(promises);
+        console.log('po promidse all')
+
+         this.tasks.forEach(task => {
+          task.completed = newStatus;
+        });
+        
+        console.log('ostatnia linia')
+      } catch (error) {
+        this.$refs.errorMessage.show('Unable to update all tasks.');
+      }
     },
     handleSubmit() {
       const title = this.title;
@@ -121,6 +139,7 @@ export default {
           <button
             @click="toggleAll"
             type="button"
+            v-on:click=""
             class="todoapp__toggle-all"
             data-cy="ToggleAllButton"></button>
 
@@ -140,7 +159,7 @@ export default {
             <TodoItem
               v-for="task of visibleTasks"
               :task="task"
-              :key="task.id"
+              :key="`${task.id}${task.completed}`"              
               @remove="removeTask"
               @update="updateTask" />
           </TransitionGroup>

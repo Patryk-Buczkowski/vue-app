@@ -13,7 +13,7 @@ export default {
   watch: {
     count: {
       handler() {
-        console.log('count', this.count);
+        // console.log('count', this.count);
       },
     },
   },

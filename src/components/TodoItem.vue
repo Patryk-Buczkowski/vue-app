@@ -6,6 +6,7 @@ export default {
   props: {
     task: Object,
   },
+  
   data() {
     return {
       editing: false,
@@ -66,6 +67,7 @@ export default {
     },
   },
 };
+console.log('url', import.meta.env.VITE_BASE_URL);
 </script>
 
 <template>
