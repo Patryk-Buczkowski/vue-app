@@ -175,7 +175,7 @@ const visibleTasks = computed(() => {
     case 'completed':
       return completedTasks.value;
     default:
-      return tasks.value.sort((a, b) => +a.completed - +b.completed);
+      return [...tasks.value].sort((a, b) => +a.completed - +b.completed);
   }
 });
 
