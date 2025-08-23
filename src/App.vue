@@ -175,7 +175,7 @@ const visibleTasks = computed(() => {
     case 'completed':
       return completedTasks.value;
     default:
-      return tasks.value;
+      return tasks.value.sort((a, b) => +a.completed - +b.completed);
   }
 });
 
@@ -239,9 +239,7 @@ const removeTask = ({ id }: { id: number }) => {
   });
 };
 
-watch(
-  tasks,
-  newTasks => {
+watch(tasks, newTasks => {
     localStorage.setItem('tasks', JSON.stringify(newTasks));
   },
   { deep: true },
@@ -273,7 +271,6 @@ watch(
           <button
             @click="toggleAll"
             type="button"
-            v-on:click=""
             class="todoapp__toggle-all"
             data-cy="ToggleAllButton"></button>
 
@@ -283,7 +280,6 @@ watch(
               type="text"
               class="todoapp__new-todo"
               placeholder="What needs to be done?"
-              value=""
               v-model="title" />
           </form>
         </header>
