@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import StatusFilter from './components/StatusFilter.vue';
 import TodoItem from './components/TodoItem.vue';
 import { createTodo, deleteTask, getTasks, patchTask } from './http-client';
@@ -15,6 +15,7 @@ export default {
     const data = localStorage.getItem('tasks');
     const tasks = data !== null ? JSON.parse(data) : [];
     return {
+      list: [],
       tasks: [],
       title: '',
       activeFilteName: 'all',
@@ -128,12 +129,145 @@ export default {
     },
   },
 };
-</script>
+</script> -->
 
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
+import StatusFilter from './components/StatusFilter.vue';
+import TodoItem from './components/TodoItem.vue';
+import Message from './components/Message.vue';
+import { createTodo, deleteTask, getTasks, patchTask } from './http-client';
+
+interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+const list = ref<string[]>([]);
+const tasks = ref<Task[]>([]);
+const title = ref<string>('');
+const activeFilteName = ref<string>('all');
+const errorMessage = ref<InstanceType<typeof Message> | null>(null);
+
+onMounted(() => {
+  getTasks()
+    .then(data => {
+      tasks.value = data;
+    })
+    .catch(() => {
+      if (errorMessage.value) {
+        errorMessage.value.show('Unable to load todos');
+      }
+    });
+});
+
+const remainingTasks = computed(() =>
+  tasks.value.filter(task => !task.completed),
+);
+const completedTasks = computed(() =>
+  tasks.value.filter(task => task.completed),
+);
+const visibleTasks = computed(() => {
+  switch (activeFilteName.value) {
+    case 'active':
+      return remainingTasks.value;
+    case 'completed':
+      return completedTasks.value;
+    default:
+      return tasks.value;
+  }
+});
+
+const updateTask = (updatedTask: Task) => {
+  const index = tasks.value.findIndex(task => task.id === updatedTask.id);
+  if (index !== -1) {
+    tasks.value.splice(index, 1, updatedTask);
+  }
+};
+
+const clearCompleted = () => {
+  tasks.value.forEach(task => {
+    if (task.completed) {
+      deleteTask({ taskId: task.id }).then(() => {
+        tasks.value = tasks.value.filter(t => t.id !== task.id);
+      });
+    }
+  });
+};
+
+const toggleAll = async () => {
+  const allCompleted = tasks.value.every(task => task.completed);
+  const newStatus = !allCompleted;
+  const promises = tasks.value.map(task =>
+    patchTask({
+      taskId: task.id,
+      title: task.title,
+      completed: newStatus,
+    }),
+  );
+
+  try {
+    await Promise.all(promises);
+    tasks.value.forEach(task => {
+      task.completed = newStatus;
+    });
+  } catch (error) {
+    if (errorMessage.value) {
+      errorMessage.value.show('Unable to update all tasks.');
+    }
+  }
+};
+
+const handleSubmit = () => {
+  if (title.value.trim() === '') {
+    return;
+  }
+  createTodo(title.value.trim()).then(({ data }) => {
+    tasks.value = [...tasks.value, data];
+    title.value = '';
+  });
+};
+
+const removeTask = ({ id }: { id: number }) => {
+  const index = tasks.value.findIndex(task => task.id === id);
+  if (index === -1) {
+    return;
+  }
+  deleteTask({ taskId: id }).then(() => {
+    tasks.value.splice(index, 1);
+  });
+};
+
+watch(
+  tasks,
+  newTasks => {
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
+  },
+  { deep: true },
+);
+</script>
 <template>
   <div id="root">
     <div class="todoapp">
       <h1 class="todoapp__title">todos</h1>
+      <label>
+        <input type="checkbox" value="pierwszy" v-model="list" />
+        Pierwszy
+      </label>
+
+      <label>
+        <input type="checkbox" value="drugi" v-model="list" />
+        Drugi
+      </label>
+
+      <label>
+        <input type="checkbox" value="trzeci" v-model="list" />
+        Trzeci
+      </label>
+      <br />
+      {{ list }}
+
       <div class="todoapp__content">
         <header class="todoapp__header">
           <button
@@ -159,7 +293,7 @@ export default {
             <TodoItem
               v-for="task of visibleTasks"
               :task="task"
-              :key="`${task.id}${task.completed}`"              
+              :key="`${task.id}${task.completed}`"
               @remove="removeTask"
               @update="updateTask" />
           </TransitionGroup>
